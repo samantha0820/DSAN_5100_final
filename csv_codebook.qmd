@@ -1,0 +1,99 @@
+---
+title: "ev project: csv codebook"
+subtitle: "5100"
+author: "Christy Hsu"
+format:
+  html:
+    embed-resources: true
+    callout:
+      appearance: default
+---
+
+## Variables
+
+```{r}
+library(tidyverse) |> suppressMessages()
+library(sf)
+library(rnaturalearth)
+library(mapview)
+```
+```{r}
+csv_fpath <- 'data/ev1124-2.csv'
+# sf_fpath <- 'data/ev1124-2.gpkg'
+```
+```{r}
+ev_df <- read_csv(csv_fpath)
+# ev_sf <- sf::st_read(sf_fpath)
+```
+```{r}
+ev_df |> dim()
+# ev_sf |> colnames()
+```
+
+## data ev1124-2.csv description
+
+The dimension of our original dataset is 210165 * 19. Each row represents a unit of observation, which is a BEV or a PHEV registered through the Washington State Department of Licensing.
+
+The dataset covers registrations through October 31, 2024.
+
+### After some basic data processing steps:
+
+cleaning
+
+- removed rows with missing values geometry values
+- filtered out points outside our observation window (i. e., outside the boundaries of WA state)^[why ? justification needed]
+- adjusted column names (lowercase() and replace() spaces with '_')
+
+expanding
+
+- added new columns `urban`, `fips`
+- joined our ev_df with census bureau's data for population and income information using `fips`
+- acquired new columns `fips_total_pop`, `n_household`, `house_median_income`
+- the `geom` column is generated automatically when we want to plot the data on the map
+
+we ended up with a 208002 * 23 dataframe!
+
+### overview
+
+Rows: 208002
+- removed `10` rows with missing values in `location`(POINT(longitude, latitude): `210155` rows left
+- removed records with longitude and latitude outside of the WA state boundary by spatial filtering, drop `2153` rows
+  - resulting in `208002` observations
+
+Columns: 23
+
+::: {.callout-note title='columns explained' appearance="simple" collapse="true"}
+
+1. `vin_110`  
+2. `county`  
+3. `city`  
+4. `state`  
+5. `postal_code`  
+6. `model_year`  
+7. `make`  
+8. `model`  
+9. `electric_vehicle_type`  
+10. `cafv_eligibility`  
+11. `electric_range`  
+12. `base_msrp`  
+13. `legislative_district`  
+14. `dol_vehicle_id`  
+15. `location`  
+16. `electric_utility`  
+17. `X2020_census_tract`  
+
+- [ ] add more descriptions!
+- [ ] 
+:::
+
+- [ ] I will add detailed description for the following cols!
+
+1. `urban`  
+2. `fips`: equivalent to `GEO-ID` or `2020 Census Tract`  
+3. `fips_total_pop`  
+4. `n_household`  
+5. `house_median_income`  
+6. `geom`  
+
+
+
